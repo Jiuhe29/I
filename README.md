@@ -26,7 +26,7 @@
 ## 目录结构
 
 ```
-index.html           # 主页源码
+index.html        # 主页源码
 images/wx.png     # 微信二维码图片
 images/qq.png     # QQ二维码图片
 all.min.css       # Font Awesome 图标库
