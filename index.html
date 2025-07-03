@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>伟伟子 | 全栈Web开发者</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #06b6d4;
+            --dark: #1e293b;
+            --darker: #0f172a;
+            --light: #f8fafc;
+            --gray: #94a3b8;
+            --success: #10b981;
+            --card-bg: rgba(255, 255, 255, 0.08);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--darker), #0c1226);
+            color: var(--light);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.15) 0%, transparent 20%);
+            z-index: -1;
+        }
+
+        .particles-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header & Navigation */
+        header {
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            background: rgba(15, 23, 42, 0.7);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--light);
+            text-decoration: none;
+        }
+
+        .logo span {
+            color: var(--primary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            padding: 5px 0;
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-links a::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 100px 0 70px;
+            display: flex;
+            align-items: center;
+            gap: 60px;
+        }
+
+        .hero-content {
+            flex: 1;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 span {
+            color: var(--primary);
+            position: relative;
+        }
+
+        .hero h1 span::after {
+            content: "";
+            position: absolute;
+            bottom: 5px;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: rgba(99, 102, 241, 0.3);
+            z-index: -1;
+        }
+
+        .tagline {
+            font-size: 1.25rem;
+            color: var(--gray);
+            max-width: 600px;
+            margin-bottom: 40px;
+        }
+
+        .highlight {
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 18px rgba(99, 102, 241, 0.6);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--light);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--primary);
+        }
+
+        .hero-image {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            position: relative;
+        }
+
+        .code-card {
+            width: 100%;
+            max-width: 450px;
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .card-header {
+            padding: 15px 20px;
+            background: rgba(15, 23, 42, 0.8);
+            border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+            display: flex;
+            align-items: center;
+        }
+
+        .card-dots {
+            display: flex;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .dot-red {
+            background: #ff5f56;
+        }
+
+        .dot-yellow {
+            background: #ffbd2e;
+        }
+
+        .dot-green {
+            background: #27c93f;
+        }
+
+        .card-title {
+            flex: 1;
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--gray);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .card-body {
+            padding: 25px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem;
+            line-height: 1.8;
+        }
+
+        .code-line {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .code-comment {
+            color: #64748b;
+        }
+
+        .code-keyword {
+            color: #c792ea;
+        }
+
+        .code-function {
+            color: #82aaff;
+        }
+
+        .code-string {
+            color: #c3e88d;
+        }
+
+        .code-var {
+            color: #f78c6c;
+        }
+
+        /* Tech Stack Section */
+        .section {
+            padding: 100px 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 70px;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: "";
+            position: absolute;
+            bottom: -5px;
+            left: 10%;
+            width: 80%;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            border-radius: 2px;
+        }
+
+        .section-subtitle {
+            color: var(--gray);
+            max-width: 700px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+        }
+
+        .tech-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .tech-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tech-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(99, 102, 241, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .tech-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .tech-icon {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .tech-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .tech-subtitle {
+            color: var(--gray);
+            margin-bottom: 20px;
+            font-size: 1rem;
+        }
+
+        .tech-list {
+            list-style: none;
+        }
+
+        .tech-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+        }
+
+        .tech-list li:last-child {
+            border-bottom: none;
+        }
+
+        .tech-list li::before {
+            content: "▹";
+            color: var(--primary);
+            margin-right: 10px;
+            font-size: 0.9rem;
+        }
+
+        .backend .tech-icon {
+            color: #6e40c9;
+        }
+
+        .frontend .tech-icon {
+            color: #41b883;
+        }
+
+        .database .tech-icon {
+            color: #4479a1;
+        }
+
+        /* Principles Section */
+        .principles {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.8), rgba(30, 41, 59, 0.8));
+            border-radius: 20px;
+            padding: 60px;
+            margin: 50px 0;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        .principles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .principle-card {
+            background: rgba(15, 23, 42, 0.5);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid rgba(99, 102, 241, 0.1);
+            transition: var(--transition);
+        }
+
+        .principle-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+
+        .principle-icon {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .principle-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        /* Contact Section */
+        .contact {
+            text-align: center;
+            padding: 100px 0;
+        }
+
+        .contact-icons {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        .contact-icon {
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+            font-size: 1.8rem;
+            text-decoration: none;
+            transition: var(--transition);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        .contact-icon:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Footer */
+        footer {
+            padding: 30px 0;
+            text-align: center;
+            color: var(--gray);
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            margin-top: 50px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .hero {
+                flex-direction: column;
+                padding: 70px 0 50px;
+            }
+
+            .hero-content,
+            .hero-image {
+                width: 100%;
+            }
+
+            .hero h1 {
+                font-size: 2.8rem;
+            }
+
+            .section {
+                padding: 70px 0;
+            }
+
+            .principles {
+                padding: 40px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 2.3rem;
+            }
+
+            .tagline {
+                font-size: 1.1rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .principles {
+                padding: 30px 20px;
+            }
+        }
+
+        .scroll-anchor {
+            scroll-margin-top: 100px;
+        }
+
+        [x-cloak] {
+            display: none !important;
+        }
+
+        .icon-with-qrcode {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        .qrcode-box {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(.4,2,.6,1), opacity 0.3s;
+            will-change: max-height, opacity;
+            z-index: 10;
+            pointer-events: none;
+        }
+        .qrcode-box img {
+            width: 120px;
+            margin-top: 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 16px rgba(99,102,241,0.15);
+        }
+        .qrcode-box.active {
+            max-height: 220px;
+            opacity: 1;
+            pointer-events: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Animated Background -->
+    <div class="particles-container" id="particles"></div>
+
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <a href="#" class="logo">
+                    <i class="fas fa-code"></i>
+                    <span>Jiuhe29</span>
+                </a>
+                <div class="nav-links">
+                    <a href="#about" class="nav-anchor">关于我</a>
+                    <a href="#tech" class="nav-anchor">技术栈</a>
+                    <a href="#principles" class="nav-anchor">开发理念</a>
+                    <a href="#contact" class="nav-anchor">联系我</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Hero Section -->
+        <section class="hero" id="about">
+            <div class="hero-content">
+                <h1>我是<span>全栈Web开发者</span></h1>
+                <p class="tagline">
+                    专注于使用 <span class="highlight">.NET Core</span> 和 <span class="highlight">ASP.NET MVC</span>
+                    构建高性能后端API，
+                    前端则使用 <span class="highlight">Nuxt</span>、<span class="highlight">Tailwind CSS</span> 和 <span
+                        class="highlight">Razor</span>。
+                    追求代码结构清晰、界面极简丝滑，注重用户体验和系统性能。
+                </p>
+
+                <div class="cta-buttons">
+                    <a href="#tech" class="btn btn-primary">
+                        <i class="fas fa-laptop-code"></i> 查看技术栈
+                    </a>
+                    <a href="#contact" class="btn btn-secondary">
+                        <i class="fas fa-paper-plane"></i> 联系我
+                    </a>
+                </div>
+            </div>
+
+            <div class="hero-image">
+                <div class="code-card">
+                    <div class="card-header">
+                        <div class="card-dots">
+                            <div class="dot dot-red"></div>
+                            <div class="dot dot-yellow"></div>
+                            <div class="dot dot-green"></div>
+                        </div>
+                        <div class="card-title">backend.cs</div>
+                    </div>
+                    <div class="card-body">
+                        <span class="code-line"><span class="code-keyword">public class</span> <span
+                                class="code-function">UserController</span> : ControllerBase</span>
+                        <span class="code-line">{</span>
+                        <span class="code-line"> <span class="code-keyword">private readonly</span> ApplicationDbContext
+                            <span class="code-var">_context</span>;</span>
+                        <span class="code-line"> </span>
+                        <span class="code-line"> <span class="code-comment">// Constructor with dependency
+                                injection</span></span>
+                        <span class="code-line"> <span class="code-keyword">public</span> <span
+                                class="code-function">UserController</span>(ApplicationDbContext context)</span>
+                        <span class="code-line"> {</span>
+                        <span class="code-line"> <span class="code-var">_context</span> = context;</span>
+                        <span class="code-line"> }</span>
+                        <span class="code-line"> </span>
+                        <span class="code-line"> <span class="code-comment">// GET: api/Users</span></span>
+                        <span class="code-line"> [<span class="code-function">HttpGet</span>]</span>
+                        <span class="code-line"> <span class="code-keyword">public async</span>
+                            Task&lt;ActionResult&lt;IEnumerable&lt;UserDto&gt;&gt;&gt; <span
+                                class="code-function">GetUsers</span>()</span>
+                        <span class="code-line"> {</span>
+                        <span class="code-line"> <span class="code-keyword">var</span> users = <span
+                                class="code-keyword">await</span> <span class="code-var">_context</span>.Users</span>
+                        <span class="code-line"> .<span class="code-function">Where</span>(u => !u.IsDeleted) <span
+                                class="code-comment">// Soft delete</span></span>
+                        <span class="code-line"> .<span class="code-function">Select</span>(u => <span
+                                class="code-keyword">new</span> UserDto(u))</span>
+                        <span class="code-line"> .<span class="code-function">ToListAsync</span>();</span>
+                        <span class="code-line"> </span>
+                        <span class="code-line"> <span class="code-keyword">return</span> <span
+                                class="code-function">Ok</span>(users);</span>
+                        <span class="code-line"> }</span>
+                        <span class="code-line">}</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tech Stack Section -->
+        <section class="section" id="tech">
+            <div class="section-header">
+                <h2 class="section-title">技术栈</h2>
+                <p class="section-subtitle">前后端兼修，构建高性能、可扩展的现代Web应用</p>
+            </div>
+
+            <div class="tech-container">
+                <!-- Backend Card -->
+                <div class="tech-card backend">
+                    <i class="tech-icon fas fa-server"></i>
+                    <h3 class="tech-title">后端技术</h3>
+                    <p class="tech-subtitle">构建高性能、安全的 API 和服务</p>
+                    <ul class="tech-list">
+                        <li>C# 与 .NET Core / MVC</li>
+                        <li>ASP.NET Core API 设计</li>
+                        <li>Entity Framework (数据库优先)</li>
+                        <li>RESTful API 实现</li>
+                        <li>JWT 用户认证机制</li>
+                        <li>依赖注入与中间件开发</li>
+                        <li>异步编程与性能调优</li>
+                    </ul>
+                </div>
+
+                <!-- Frontend Card -->
+                <div class="tech-card frontend">
+                    <i class="tech-icon fas fa-laptop-code"></i>
+                    <h3 class="tech-title">前端技术</h3>
+                    <p class="tech-subtitle">构建响应式、极简主义用户界面</p>
+                    <ul class="tech-list">
+                        <li>Nuxt.js (Vue 3)</li>
+                        <li>Tailwind CSS v4.x</li>
+                        <li>响应式布局与动画交互</li>
+                        <li>Razor 页面 / Layout 模板</li>
+                        <li>组件化开发与复用</li>
+                        <li>原生 fetch 请求通信</li>
+                        <li>前端渐变背景与模糊效果</li>
+                    </ul>
+                </div>
+
+                <!-- Database & Tools Card -->
+                <div class="tech-card database">
+                    <i class="tech-icon fas fa-database"></i>
+                    <h3 class="tech-title">数据库与工具</h3>
+                    <p class="tech-subtitle">数据库建模与开发协作</p>
+                    <ul class="tech-list">
+                        <li>SQL Server</li>
+                        <li>数据表结构设计与约束</li>
+                        <li>关系建模 (一对多、多对多)</li>
+                        <li>软删除与字段约束策略</li>
+                        <li>EF Core Scaffold 命令行工具</li>
+                        <li>Visual Studio / VS Code</li>
+                        <li>Postman / Swagger 接口测试</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Development Principles -->
+        <section id="principles" class="scroll-anchor">
+            <div class="principles">
+                <div class="section-header">
+                    <h2 class="section-title">开发理念</h2>
+                    <p class="section-subtitle">指导我工作的核心原则</p>
+                </div>
+
+                <div class="principles-grid">
+                    <div class="principle-card">
+                        <i class="principle-icon fas fa-code"></i>
+                        <h3 class="principle-title">代码清晰</h3>
+                        <p>遵循 SOLID 原则，编写具备可读性和可维护性的代码。统一命名风格，模块职责分明。</p>
+                    </div>
+
+                    <div class="principle-card">
+                        <i class="principle-icon fas fa-bolt"></i>
+                        <h3 class="principle-title">性能优先</h3>
+                        <p>从 SQL 查询优化到静态资源懒加载，始终关注系统响应速度与资源利用效率。</p>
+                    </div>
+
+                    <div class="principle-card">
+                        <i class="principle-icon fas fa-layer-group"></i>
+                        <h3 class="principle-title">合理分层</h3>
+                        <p>划分实体、DTO、服务、控制器层，保持职责清晰、代码高内聚低耦合。</p>
+                    </div>
+
+                    <div class="principle-card">
+                        <i class="principle-icon fas fa-paint-brush"></i>
+                        <h3 class="principle-title">极致体验</h3>
+                        <p>注重视觉统一与交互细节，运用 Tailwind CSS 构建丝滑、简约的 UI 界面。</p>
+                    </div>
+
+                    <div class="principle-card">
+                        <i class="principle-icon fas fa-database"></i>
+                        <h3 class="principle-title">数据为本</h3>
+                        <p>重视数据结构设计与约束，运用 EF Core 数据库优先策略构建可靠的数据基础。</p>
+                    </div>
+
+                    <div class="principle-card">
+                        <i class="principle-icon fas fa-tools"></i>
+                        <h3 class="principle-title">工具高效</h3>
+                        <p>善用 VS、VS Code、Swagger、Postman 等工具提升开发效率，优化调试与测试流程。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Contact Section -->
+        <section class="contact" id="contact">
+            <div class="section-header">
+                <h2 class="section-title">联系我</h2>
+                <p class="section-subtitle">有项目需要开发？或者只是想聊聊技术？欢迎联系</p>
+            </div>
+
+            <div class="contact-icons">
+                <a href="https://github.com/jiuhe29" class="contact-icon" target="_blank">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="mailto:Jiuhe29@163.com" class="contact-icon">
+                    <i class="fas fa-envelope"></i>
+                </a>
+                <div class="icon-with-qrcode">
+                    <a class="contact-icon" href="javascript:void(0);" onclick="toggleQrcode('wx')">
+                        <i class="fab fa-weixin"></i>
+                    </a>
+                    <div class="qrcode-box" id="qrcode-wx">
+                        <img src="./images/wx.png" alt="微信二维码">
+                    </div>
+                </div>
+                <div class="icon-with-qrcode">
+                    <a class="contact-icon" href="javascript:void(0);" onclick="toggleQrcode('qq')">
+                        <i class="fab fa-qq"></i>
+                    </a>
+                    <div class="qrcode-box" id="qrcode-qq">
+                        <img src="./images/qq.png" alt="QQ二维码">
+                    </div>
+                </div>
+                <a href="https://jiuhe29.github.io/" class="contact-icon" target="_blank">
+                    <i class="fas fa-globe"></i>
+                </a>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <div class="container">
+            <p>Copyright © 2025 Jiuhe29 | 全栈Web开发者</p>
+        </div>
+    </footer>
+
+    <script>
+        // Particle Background Animation
+        document.addEventListener('DOMContentLoaded', function () {
+            const container = document.getElementById('particles');
+
+            // Scene setup
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            container.appendChild(renderer.domElement);
+
+            // Create particles
+            const particlesGeometry = new THREE.BufferGeometry();
+            const particlesCount = 1500;
+            const posArray = new Float32Array(particlesCount * 3);
+
+            for (let i = 0; i < particlesCount * 3; i++) {
+                posArray[i] = (Math.random() - 0.5) * 10;
+            }
+
+            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+            // Material
+            const particlesMaterial = new THREE.PointsMaterial({
+                size: 0.02,
+                color: new THREE.Color(0x6366f1),
+                transparent: true,
+                opacity: 0.6
+            });
+
+            // Points system
+            const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+            scene.add(particlesMesh);
+
+            // Camera position
+            camera.position.z = 3;
+
+            // Mouse movement effect
+            let mouseX = 0;
+            let mouseY = 0;
+
+            document.addEventListener('mousemove', (event) => {
+                mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+                mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+            });
+
+            // Animation
+            function animate() {
+                requestAnimationFrame(animate);
+
+                // Rotate particles
+                particlesMesh.rotation.x += 0.001;
+                particlesMesh.rotation.y += 0.001;
+
+                // Move camera with mouse
+                camera.position.x += (mouseX * 0.5 - camera.position.x) * 0.05;
+                camera.position.y += (mouseY * 0.5 - camera.position.y) * 0.05;
+                camera.lookAt(scene.position);
+
+                renderer.render(scene, camera);
+            }
+
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+
+            animate();
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a.nav-anchor').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        function toggleQrcode(type) {
+            ['wx', 'qq'].forEach(function(t){
+                if (t === type) {
+                    document.getElementById('qrcode-' + t).classList.toggle('active');
+                } else {
+                    document.getElementById('qrcode-' + t).classList.remove('active');
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>
